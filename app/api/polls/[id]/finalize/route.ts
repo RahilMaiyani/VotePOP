@@ -14,7 +14,18 @@ export async function POST(
     }
 
     const body = await req.json();
-    const { decidedOptionId, action = 'lock' } = body;
+    const { decidedOptionId, action = 'lock', username } = body;
+
+    // Verify creator authorization
+    const cleanRequester = (username || '').toLowerCase().trim();
+    const cleanCreator = (poll.createdBy.username || '').toLowerCase().trim();
+
+    if (!cleanRequester || cleanRequester !== cleanCreator) {
+      return NextResponse.json(
+        { error: `Only the poll creator (@${poll.createdBy.username}) can lock or finalize this decision.` },
+        { status: 403 }
+      );
+    }
 
     if (action === 'unlock') {
       poll.isClosed = false;

@@ -15,6 +15,7 @@ import {
   TrophyIcon,
   CloseIcon,
   VoteIcon,
+  UserIcon,
 } from '../components/Icons';
 import { vibrateTap, vibrateSelect, vibrateSuccess } from '../lib/haptics';
 
@@ -30,6 +31,7 @@ export default function HomePage() {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [notes, setNotes] = useState('');
+  const [guestCreatorName, setGuestCreatorName] = useState('');
   const [options, setOptions] = useState<string[]>(['', '']);
   const [allowCustomOptions, setAllowCustomOptions] = useState(true);
   const [allowMultipleVotes, setAllowMultipleVotes] = useState(false);
@@ -89,8 +91,27 @@ export default function HomePage() {
       return;
     }
 
+    if (!user && !guestCreatorName.trim()) {
+      setFormError('Please enter your name as creator (or sign in)');
+      return;
+    }
+
     setSubmitting(true);
     vibrateTap();
+
+    const creatorData = user
+      ? {
+          username: user.username,
+          name: user.name,
+          avatarType: user.avatarType,
+          avatarBgColor: user.avatarBgColor,
+        }
+      : {
+          username: guestCreatorName.trim().toLowerCase().replace(/[^a-z0-9_]/g, '') || 'friend',
+          name: guestCreatorName.trim(),
+          avatarType: 'initials' as const,
+          avatarBgColor: '#CEFF00',
+        };
 
     try {
       const res = await fetch('/api/polls', {
@@ -103,19 +124,7 @@ export default function HomePage() {
           options: validOptions,
           allowCustomOptions,
           allowMultipleVotes,
-          createdBy: user
-            ? {
-              username: user.username,
-              name: user.name,
-              avatarType: user.avatarType,
-              avatarBgColor: user.avatarBgColor,
-            }
-            : {
-              username: 'guest',
-              name: 'Squad Member',
-              avatarType: 'initials',
-              avatarBgColor: '#CEFF00',
-            },
+          createdBy: creatorData,
         }),
       });
 
@@ -135,59 +144,76 @@ export default function HomePage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 pb-10">
       {/* Hero Banner */}
-      <section className="bg-white border-[3px] border-black shadow-[6px_6px_0px_#000] rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+      <section className="bg-white border-[3px] border-black shadow-[6px_6px_0px_#000] rounded-3xl p-5 sm:p-8 relative overflow-hidden">
         <div className="flex flex-wrap items-center gap-2 mb-3">
-          <span className="px-3 py-1 bg-[#CEFF00] border-2 border-black rounded-full font-black text-[11px] uppercase tracking-wider shadow-[1.5px_1.5px_0px_#000]">
+          <span className="px-3 py-1 bg-[#CEFF00] border-2 border-black rounded-full font-black text-[10px] sm:text-[11px] uppercase tracking-wider shadow-[1.5px_1.5px_0px_#000]">
             Squad Decision Engine
           </span>
-          <span className="px-3 py-1 bg-[#00E5FF] border-2 border-black rounded-full font-black text-[11px] uppercase tracking-wider shadow-[1.5px_1.5px_0px_#000]">
+          <span className="px-3 py-1 bg-[#00E5FF] border-2 border-black rounded-full font-black text-[10px] sm:text-[11px] uppercase tracking-wider shadow-[1.5px_1.5px_0px_#000]">
             Instant QR Sharing
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-black uppercase leading-[1.05] mb-3">
+        <h1 className="text-2xl sm:text-5xl font-black tracking-tight text-black uppercase leading-[1.08] mb-3">
           No More 50-Message Group Chat Debates.
         </h1>
-        <p className="text-sm sm:text-base font-bold text-gray-700 max-w-xl mb-6">
+        <p className="text-xs sm:text-base font-bold text-gray-700 max-w-xl mb-5 sm:mb-6">
           Set up a poll for cricket turf slots, pickleball courts, or weekend hangouts. Friends scan the QR, enter their name, and the winning decision is crowned in real-time.
         </p>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
           <button
             onClick={() => {
               vibrateTap();
               setShowCreateModal(true);
             }}
-            className="px-6 py-3.5 bg-[#FFE600] text-black font-black text-sm uppercase rounded-2xl border-[2.5px] border-black shadow-[4px_4px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none flex items-center gap-2 transition-all cursor-pointer"
+            className="px-5 sm:px-6 py-3 sm:py-3.5 bg-[#FFE600] text-black font-black text-xs sm:text-sm uppercase rounded-2xl border-[2.5px] border-black shadow-[4px_4px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none flex items-center gap-2 transition-all cursor-pointer"
           >
             <PlusIcon size={18} strokeWidth={3} />
             <span>Create A Poll</span>
           </button>
 
-          {!user && (
+          {user ? (
             <button
               onClick={() => {
                 vibrateTap();
                 openAuthModal();
               }}
-              className="px-5 py-3.5 bg-white text-black font-black text-sm uppercase rounded-2xl border-[2.5px] border-black shadow-[3px_3px_0px_#000] hover:bg-gray-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer"
+              className="px-4 sm:px-5 py-3 sm:py-3.5 bg-white text-black font-black text-xs sm:text-sm uppercase rounded-2xl border-[2.5px] border-black shadow-[3px_3px_0px_#000] hover:bg-gray-50 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center gap-2 cursor-pointer"
             >
-              Set Squad Profile
+              <Avatar
+                name={user.name}
+                avatarType={user.avatarType}
+                avatarBgColor={user.avatarBgColor}
+                size="xs"
+              />
+              <span>My Profile</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                vibrateTap();
+                openAuthModal();
+              }}
+              className="px-4 sm:px-5 py-3 sm:py-3.5 bg-[#00E5FF] text-black font-black text-xs sm:text-sm uppercase rounded-2xl border-[2.5px] border-black shadow-[3px_3px_0px_#000] hover:bg-[#FFE600] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <UserIcon size={16} />
+              <span>Register / Sign In</span>
             </button>
           )}
         </div>
       </section>
 
       {/* Active Polls Header */}
-      <section className="space-y-4">
+      <section className="space-y-3.5 sm:space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-md bg-[#FF6EA7] border-2 border-black flex items-center justify-center shadow-[1px_1px_0px_#000]">
               <SparklesIcon size={14} />
             </div>
-            <h2 className="font-black text-xl uppercase tracking-tight text-black">
+            <h2 className="font-black text-lg sm:text-xl uppercase tracking-tight text-black">
               Active Squad Polls
             </h2>
           </div>
@@ -209,11 +235,11 @@ export default function HomePage() {
             </p>
           </div>
         ) : polls.length === 0 ? (
-          <div className="py-12 px-6 text-center bg-white border-[2.5px] border-black rounded-2xl shadow-[4px_4px_0px_#000] space-y-3">
+          <div className="py-10 px-6 text-center bg-white border-[2.5px] border-black rounded-2xl shadow-[4px_4px_0px_#000] space-y-3">
             <div className="w-12 h-12 bg-[#CEFF00] border-2 border-black rounded-2xl flex items-center justify-center mx-auto shadow-[2px_2px_0px_#000]">
               <VoteIcon size={24} />
             </div>
-            <p className="font-black text-lg text-black uppercase">No Polls Created Yet</p>
+            <p className="font-black text-base sm:text-lg text-black uppercase">No Polls Created Yet</p>
             <p className="text-xs font-bold text-gray-600 max-w-sm mx-auto">
               Be the first to create a poll for your cricket match, pickleball rally, or group plans!
             </p>
@@ -228,7 +254,7 @@ export default function HomePage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
             {polls.map((poll) => {
               const totalVotes = poll.options.reduce((sum, opt) => sum + opt.voters.length, 0);
               const leadingOpt = [...poll.options].sort((a, b) => b.voters.length - a.voters.length)[0];
@@ -238,34 +264,34 @@ export default function HomePage() {
                   key={poll.id}
                   href={`/poll/${poll.id}`}
                   onClick={vibrateTap}
-                  className="group bg-white border-[2.5px] border-black rounded-2xl p-5 shadow-[4px_4px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[6px_6px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0px_#000] transition-all flex flex-col justify-between"
+                  className="group bg-white border-[2.5px] border-black rounded-2xl p-4 sm:p-5 shadow-[4px_4px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[6px_6px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0px_#000] transition-all flex flex-col justify-between"
                 >
                   <div>
                     {/* Top Chips */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className="flex items-center justify-between gap-2 mb-2.5">
                       <span className="px-2.5 py-0.5 bg-[#CEFF00] border-1.5 border-black rounded-md font-black text-[10px] uppercase tracking-wider shadow-[1px_1px_0px_#000]">
                         {poll.category}
                       </span>
                       {poll.isClosed ? (
-                        <span className="flex items-center gap-1 px-2 py-0.5 bg-[#FF5533] text-white border-1.5 border-black rounded-md font-black text-[10px] uppercase shadow-[1px_1px_0px_#000]">
+                        <span className="flex items-center gap-1 px-2 py-0.5 bg-[#FF5533] text-white border-1.5 border-black rounded-md font-black text-[9px] uppercase shadow-[1px_1px_0px_#000]">
                           <LockIcon size={10} />
                           <span>Decided</span>
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 bg-[#00E5FF] border-1.5 border-black rounded-md font-black text-[10px] uppercase shadow-[1px_1px_0px_#000]">
+                        <span className="px-2 py-0.5 bg-[#00E5FF] border-1.5 border-black rounded-md font-black text-[9px] uppercase shadow-[1px_1px_0px_#000]">
                           Open
                         </span>
                       )}
                     </div>
 
                     {/* Question / Statement */}
-                    <h3 className="font-black text-base text-black uppercase leading-snug line-clamp-2 mb-2 group-hover:text-blue-600 transition-colors">
+                    <h3 className="font-black text-sm sm:text-base text-black uppercase leading-snug line-clamp-2 mb-2 group-hover:text-blue-600 transition-colors">
                       {poll.title}
                     </h3>
 
                     {/* Optional Notes Preview */}
                     {poll.notes && (
-                      <p className="text-xs font-semibold text-gray-600 line-clamp-1 mb-3 bg-gray-50 p-1.5 border border-black/30 rounded-lg">
+                      <p className="text-[11px] font-semibold text-gray-600 line-clamp-1 mb-2.5 bg-gray-50 p-1.5 border border-black/30 rounded-lg">
                         {poll.notes}
                       </p>
                     )}
@@ -279,7 +305,7 @@ export default function HomePage() {
                             {leadingOpt.text}
                           </span>
                         </div>
-                        <span className="text-[11px] font-black shrink-0 ml-2">
+                        <span className="text-[10px] font-black shrink-0 ml-2">
                           {leadingOpt.voters.length} votes
                         </span>
                       </div>
@@ -287,25 +313,25 @@ export default function HomePage() {
                   </div>
 
                   {/* Bottom Footer: Creator & Total Votes */}
-                  <div className="pt-3 border-t-2 border-black flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-2">
+                  <div className="pt-2.5 border-t-2 border-black flex items-center justify-between mt-1">
+                    <div className="flex items-center gap-1.5 min-w-0">
                       <Avatar
                         name={poll.createdBy.name}
                         avatarType={poll.createdBy.avatarType}
                         avatarBgColor={poll.createdBy.avatarBgColor}
                         size="xs"
                       />
-                      <span className="text-xs font-bold text-gray-700 truncate max-w-[100px]">
+                      <span className="text-xs font-bold text-gray-700 truncate max-w-[100px] sm:max-w-[120px]">
                         {poll.createdBy.name}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                       <span className="text-xs font-black text-black">
                         {totalVotes} {totalVotes === 1 ? 'vote' : 'votes'}
                       </span>
-                      <div className="w-6 h-6 rounded-full bg-[#FFE600] border-1.5 border-black flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
-                        <ArrowRightIcon size={12} strokeWidth={3} />
+                      <div className="w-5 h-5 rounded-full bg-[#FFE600] border-1.5 border-black flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+                        <ArrowRightIcon size={11} strokeWidth={3} />
                       </div>
                     </div>
                   </div>
@@ -319,19 +345,19 @@ export default function HomePage() {
       {/* CREATE POLL MODAL */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in overflow-y-auto">
-          <div className="relative w-full max-w-lg bg-white border-[3px] border-black shadow-[7px_7px_0px_#000] p-6 rounded-3xl max-h-[90vh] overflow-y-auto my-auto">
+          <div className="relative w-full max-w-lg bg-white border-[3px] border-black shadow-[7px_7px_0px_#000] p-5 sm:p-6 rounded-3xl max-h-[92vh] overflow-y-auto my-auto">
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-4 border-b-2 border-black mb-5">
+            <div className="flex items-center justify-between pb-3.5 border-b-2 border-black mb-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-[#FFE600] border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
                   <PlusIcon size={20} strokeWidth={3} />
                 </div>
                 <div>
-                  <h3 className="font-black text-xl uppercase tracking-tight text-black">
+                  <h3 className="font-black text-lg sm:text-xl uppercase tracking-tight text-black leading-none">
                     Create New Poll
                   </h3>
-                  <p className="text-[11px] font-bold text-gray-600">
-                    Get quick consensus from your friends
+                  <p className="text-[10px] sm:text-[11px] font-bold text-gray-600 mt-0.5">
+                    Get quick consensus from your squad
                   </p>
                 </div>
               </div>
@@ -349,12 +375,38 @@ export default function HomePage() {
             </div>
 
             {formError && (
-              <div className="mb-4 p-3 bg-[#FF5533]/20 border-2 border-[#FF5533] rounded-xl text-black font-bold text-xs">
+              <div className="mb-4 p-3 bg-[#FF5533]/20 border-2 border-[#FF5533] rounded-xl text-black font-extrabold text-xs">
                 {formError}
               </div>
             )}
 
-            <form onSubmit={handleCreatePoll} className="space-y-4">
+            <form onSubmit={handleCreatePoll} className="space-y-3.5">
+              {/* Creator Attribution if not logged in */}
+              {!user && (
+                <div className="p-3 bg-[#00E5FF]/20 border-2 border-black rounded-2xl">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-black uppercase tracking-wider text-black">
+                      Your Name (Poll Creator) *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => openAuthModal()}
+                      className="text-[10px] font-black text-blue-700 underline uppercase"
+                    >
+                      Or Sign In
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="e.g. Rahil Maiyani"
+                    value={guestCreatorName}
+                    onChange={(e) => setGuestCreatorName(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border-2 border-black bg-white font-bold text-xs text-black placeholder:text-gray-400 focus:outline-hidden shadow-[1.5px_1.5px_0px_#000]"
+                    required
+                  />
+                </div>
+              )}
+
               {/* Question / Statement */}
               <div>
                 <label className="block text-xs font-black uppercase tracking-wider text-black mb-1">
@@ -373,7 +425,7 @@ export default function HomePage() {
               {/* Custom Category Input */}
               <div>
                 <label className="block text-xs font-black uppercase tracking-wider text-black mb-1">
-                  Custom Category (Any Name)
+                  Custom Category (Any Tag)
                 </label>
                 <input
                   type="text"
@@ -387,7 +439,7 @@ export default function HomePage() {
               {/* Optional Notes */}
               <div>
                 <label className="block text-xs font-black uppercase tracking-wider text-black mb-1 flex items-center justify-between">
-                  <span>Optional Notes & Rules</span>
+                  <span>Optional Notes & Details</span>
                   <span className="text-[10px] text-gray-500 font-bold lowercase">fees, venue, gear</span>
                 </label>
                 <textarea
@@ -450,7 +502,7 @@ export default function HomePage() {
               </div>
 
               {/* Toggles & Permissions */}
-              <div className="pt-2 border-t-2 border-black space-y-2.5">
+              <div className="pt-2 border-t-2 border-black space-y-2">
                 <label className="flex items-center justify-between p-2.5 bg-gray-50 border-2 border-black rounded-xl cursor-pointer">
                   <div>
                     <p className="font-black text-xs text-black uppercase">
@@ -490,7 +542,7 @@ export default function HomePage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full mt-4 py-3.5 bg-[#CEFF00] text-black font-black text-sm uppercase rounded-2xl border-[2.5px] border-black shadow-[4px_4px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer disabled:opacity-50"
+                className="w-full mt-3 py-3.5 bg-[#CEFF00] text-black font-black text-sm uppercase rounded-2xl border-[2.5px] border-black shadow-[4px_4px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all cursor-pointer disabled:opacity-50"
               >
                 {submitting ? 'Generating Poll & QR...' : 'Launch Poll & Generate QR 🚀'}
               </button>
