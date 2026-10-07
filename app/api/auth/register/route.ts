@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getUser, saveUser } from '../../../../lib/db';
-import { UserProfile } from '../../../../lib/types';
+import { getUser, saveUser } from '@/lib/db';
+import { UserProfile } from '@/lib/types';
 
 export async function POST(req: Request) {
   try {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getPoll, savePoll } from '../../../../../lib/db';
-import { PollOption, VoterRecord } from '../../../../../lib/types';
+import { getPoll, savePoll } from '@/lib/db';
+import { PollOption, VoterRecord } from '@/lib/types';
 
 const POP_PALETTE = ['#00E5FF', '#FF6EA7', '#FFE600', '#CEFF00', '#FF5533', '#A78BFA'];
 

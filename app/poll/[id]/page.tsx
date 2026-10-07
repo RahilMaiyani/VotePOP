@@ -2,17 +2,17 @@
 
 import React, { useState, useEffect, use, useRef } from 'react';
 import Link from 'next/link';
-import { useAuth } from '../../../components/AuthContext';
-import { Avatar } from '../../../components/Avatar';
-import { QRCodeModal } from '../../../components/QRCodeModal';
-import { Poll } from '../../../lib/types';
-import { triggerNeoConfetti } from '../../../lib/confetti';
+import { useAuth } from '@/components/AuthContext';
+import { Avatar } from '@/components/Avatar';
+import { QRCodeModal } from '@/components/QRCodeModal';
+import { Poll } from '@/lib/types';
+import { triggerNeoConfetti } from '@/lib/confetti';
 import {
   vibrateTap,
   vibrateSelect,
   vibrateSuccess,
   vibrateDecide,
-} from '../../../lib/haptics';
+} from '@/lib/haptics';
 import {
   ArrowLeftIcon,
   CheckIcon,
@@ -23,7 +23,7 @@ import {
   SparklesIcon,
   ShieldCheckIcon,
   UserIcon,
-} from '../../../components/Icons';
+} from '@/components/Icons';
 
 export default function PollDetailPage({
   params,
@@ -86,19 +86,19 @@ export default function PollDetailPage({
 
   const activeVoter = user
     ? {
-        username: user.username,
-        name: user.name,
-        avatarType: user.avatarType,
-        avatarBgColor: user.avatarBgColor,
-      }
+      username: user.username,
+      name: user.name,
+      avatarType: user.avatarType,
+      avatarBgColor: user.avatarBgColor,
+    }
     : hasEnteredGuestName && guestName.trim()
-    ? {
+      ? {
         username: guestName.trim().toLowerCase().replace(/[^a-z0-9_]/g, ''),
         name: guestName.trim(),
         avatarType: 'initials' as const,
         avatarBgColor: '#CEFF00',
       }
-    : null;
+      : null;
 
   const handleSaveGuestName = (e: React.FormEvent) => {
     e.preventDefault();
@@ -418,9 +418,8 @@ export default function PollDetailPage({
       {/* VOTER IDENTITY / NAME PROMPT CARD */}
       <section
         id="voter-identity-card"
-        className={`bg-white border-2 border-black rounded-2xl p-4 shadow-[3px_3px_0px_#000] transition-all ${
-          voteError ? 'ring-3 ring-[#FF5533] bg-red-50/20' : ''
-        }`}
+        className={`bg-white border-2 border-black rounded-2xl p-4 shadow-[3px_3px_0px_#000] transition-all ${voteError ? 'ring-3 ring-[#FF5533] bg-red-50/20' : ''
+          }`}
       >
         {activeVoter ? (
           <div className="flex items-center justify-between gap-3">
@@ -528,9 +527,8 @@ export default function PollDetailPage({
           return (
             <div
               key={opt.id}
-              className={`relative bg-white border-[2.5px] border-black rounded-2xl p-4 sm:p-5 shadow-[4px_4px_0px_#000] transition-all overflow-hidden ${
-                userVotedForThis ? 'ring-2 ring-black bg-yellow-50/50' : ''
-              }`}
+              className={`relative bg-white border-[2.5px] border-black rounded-2xl p-4 sm:p-5 shadow-[4px_4px_0px_#000] transition-all overflow-hidden ${userVotedForThis ? 'ring-2 ring-black bg-yellow-50/50' : ''
+                }`}
             >
               {/* Progress Bar background tint */}
               <div
@@ -558,11 +556,10 @@ export default function PollDetailPage({
                     <button
                       onClick={() => handleVote(opt.id)}
                       disabled={votingOptionId === opt.id}
-                      className={`shrink-0 px-3.5 py-1.5 font-black text-xs uppercase rounded-xl border-2 border-black transition-all cursor-pointer flex items-center gap-1 ${
-                        userVotedForThis
-                          ? 'bg-[#CEFF00] shadow-[2px_2px_0px_#000]'
-                          : 'bg-white hover:bg-[#FFE600] shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none'
-                      }`}
+                      className={`shrink-0 px-3.5 py-1.5 font-black text-xs uppercase rounded-xl border-2 border-black transition-all cursor-pointer flex items-center gap-1 ${userVotedForThis
+                        ? 'bg-[#CEFF00] shadow-[2px_2px_0px_#000]'
+                        : 'bg-white hover:bg-[#FFE600] shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none'
+                        }`}
                     >
                       {userVotedForThis ? (
                         <>
@@ -675,11 +672,10 @@ export default function PollDetailPage({
 
             <button
               onClick={() => handleFinalize()}
-              className={`px-4 py-2 rounded-xl border-2 border-black font-black text-xs uppercase shadow-[2.5px_2.5px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all cursor-pointer shrink-0 ${
-                isDecided
-                  ? 'bg-white text-black hover:bg-gray-100'
-                  : 'bg-[#FF5533] text-white hover:bg-black'
-              }`}
+              className={`px-4 py-2 rounded-xl border-2 border-black font-black text-xs uppercase shadow-[2.5px_2.5px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all cursor-pointer shrink-0 ${isDecided
+                ? 'bg-white text-black hover:bg-gray-100'
+                : 'bg-[#FF5533] text-white hover:bg-black'
+                }`}
             >
               {isDecided ? 'Reopen Poll 🔓' : 'Lock & Finalize Decision 🏆'}
             </button>
