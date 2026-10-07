@@ -1,0 +1,3 @@
+{
+  "/api/polls/[id]/finalize/route": "app/api/polls/[id]/finalize/route.js"
+}
