@@ -234,3 +234,50 @@ export const ShieldCheckIcon: React.FC<IconProps> = ({ className = '', size = 20
     <polyline points="9 12 11 14 15 10" />
   </svg>
 );
+
+
+export const WhatsAppIcon: React.FC<IconProps> = ({ className = '', size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="12" cy="12" r="10" fill="#25D366" stroke="#000" strokeWidth="2" />
+    <path
+      d="M17.5 14.38C17.2 14.23 15.7 13.5 15.42 13.4C15.14 13.3 14.94 13.25 14.74 13.55C14.54 13.85 13.97 14.55 13.79 14.75C13.62 14.95 13.44 14.98 13.14 14.83C12.84 14.68 11.88 14.36 10.74 13.35C9.85 12.56 9.25 11.58 9.08 11.28C8.91 10.98 9.06 10.82 9.21 10.67C9.35 10.53 9.51 10.31 9.66 10.14C9.81 9.97 9.86 9.84 9.96 9.64C10.06 9.44 10.01 9.27 9.93 9.12C9.86 8.97 9.26 7.5 9.01 6.9C8.77 6.32 8.52 6.4 8.34 6.39L7.77 6.38C7.57 6.38 7.25 6.46 6.98 6.75C6.71 7.04 5.95 7.75 5.95 9.2C5.95 10.65 7.01 12.05 7.15 12.25C7.3 12.45 9.23 15.42 12.18 16.7C12.88 17 13.43 17.18 13.86 17.32C14.56 17.54 15.2 17.51 15.7 17.43C16.27 17.35 17.45 16.72 17.7 16.02C17.95 15.32 17.95 14.73 17.87 14.6C17.8 14.48 17.65 14.43 17.5 14.38Z"
+      fill="#FFF"
+      stroke="#000"
+      strokeWidth="0.8"
+    />
+  </svg>
+);
+
+export const TelegramIcon: React.FC<IconProps> = ({ className = '', size = 20 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+    <circle cx="12" cy="12" r="10" fill="#0088CC" stroke="#000" strokeWidth="2" />
+    <path
+      d="M17.5 7.5L5.5 12.2L9.5 13.7L15.5 9.5L11 15L15 17.5L17.5 7.5Z"
+      fill="#FFF"
+      stroke="#000"
+      strokeWidth="0.8"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const DownloadIcon: React.FC<IconProps> = ({ className = '', size = 18, strokeWidth = 2.2 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <polyline points="7 10 12 15 17 10" />
+    <line x1="12" y1="15" x2="12" y2="3" />
+  </svg>
+);
+
+export const ChatIcon: React.FC<IconProps> = ({ className = '', size = 20, strokeWidth = 2.2 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+);
+
+export const SendIcon: React.FC<IconProps> = ({ className = '', size = 18, strokeWidth = 2.2 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <line x1="22" y1="2" x2="11" y2="13" />
+    <polygon points="22 2 15 22 11 13 2 9 22 2" fill="currentColor" />
+  </svg>
+);

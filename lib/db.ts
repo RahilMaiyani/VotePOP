@@ -1,5 +1,5 @@
 import { Redis } from '@upstash/redis';
-import { Poll, UserProfile } from './types';
+import { Poll, UserProfile, ChatMessage } from './types';
 
 // In-memory fallback cache
 const memoryStore = {
@@ -103,12 +103,47 @@ export async function getPoll(id: string): Promise<Poll | null> {
   return memoryStore.polls.get(id) || null;
 }
 
+export async function deletePoll(id: string): Promise<boolean> {
+  const redis = getRedis();
+  memoryStore.polls.delete(id);
+  memoryStore.pollList = memoryStore.pollList.filter((pId) => pId !== id);
+
+  if (redis) {
+    try {
+      await redis.del(`votepop:poll:${id}`);
+      await redis.lrem('votepop:recent_polls', 0, id);
+    } catch (e) {
+      console.warn('Redis error in deletePoll:', e);
+    }
+  }
+
+  return true;
+}
+
+export async function addPollMessage(pollId: string, message: ChatMessage): Promise<Poll | null> {
+  const poll = await getPoll(pollId);
+  if (!poll) return null;
+
+  if (!poll.messages) {
+    poll.messages = [];
+  }
+
+  poll.messages.push(message);
+  // Keep last 60 messages for speed & cleanliness
+  if (poll.messages.length > 60) {
+    poll.messages = poll.messages.slice(-60);
+  }
+
+  await savePoll(poll);
+  return poll;
+}
+
 export async function getRecentPolls(): Promise<Poll[]> {
   const redis = getRedis();
 
   if (redis) {
     try {
-      const ids = await redis.lrange('votepop:recent_polls', 0, 19);
+      const ids = await redis.lrange('votepop:recent_polls', 0, 29);
       if (ids && ids.length > 0) {
         const uniqueIds = Array.from(new Set(ids));
         const polls: Poll[] = [];

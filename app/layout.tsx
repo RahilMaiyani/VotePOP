@@ -6,7 +6,7 @@ import { BackgroundShapes } from '../components/BackgroundShapes';
 import { Navbar } from '../components/Navbar';
 
 export const metadata: Metadata = {
-  title: 'VOTEPOP — High Contrast Squad Polls & Decisions',
+  title: 'VOTEPOP | High-Contrast Squad Polls & Decisions',
   description: 'Fast, vibrant voting and decision engine for pickleball, cricket, and friend squads.',
 };
 

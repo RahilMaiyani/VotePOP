@@ -14,15 +14,23 @@ export async function POST(
     }
 
     const body = await req.json();
-    const { decidedOptionId, action = 'lock', username } = body;
+    const { decidedOptionId, action = 'lock', username, name } = body;
 
     // Verify creator authorization
-    const cleanRequester = (username || '').toLowerCase().trim();
-    const cleanCreator = (poll.createdBy.username || '').toLowerCase().trim();
+    const cleanRequesterUser = (username || '').toLowerCase().trim();
+    const cleanRequesterName = (name || '').toLowerCase().trim();
+    const cleanCreatorUser = (poll.createdBy.username || '').toLowerCase().trim();
+    const cleanCreatorName = (poll.createdBy.name || '').toLowerCase().trim();
 
-    if (!cleanRequester || cleanRequester !== cleanCreator) {
+    const isAuthorized =
+      Boolean(cleanRequesterUser && cleanRequesterUser === cleanCreatorUser) ||
+      Boolean(cleanRequesterName && cleanRequesterName === cleanCreatorName) ||
+      Boolean(cleanRequesterUser && cleanRequesterUser === cleanCreatorName) ||
+      Boolean(cleanRequesterName && cleanRequesterName === cleanCreatorUser);
+
+    if (!isAuthorized) {
       return NextResponse.json(
-        { error: `Only the poll creator (@${poll.createdBy.username}) can lock or finalize this decision.` },
+        { error: `Only the poll creator (@${poll.createdBy.username || poll.createdBy.name}) can lock or finalize this decision.` },
         { status: 403 }
       );
     }

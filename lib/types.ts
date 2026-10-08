@@ -33,6 +33,18 @@ export interface PollOption {
   voters: VoterRecord[]; // List of friend records who voted for this
 }
 
+export interface ChatMessage {
+  id: string;
+  text: string;
+  createdAt: number;
+  sender: {
+    username: string;
+    name: string;
+    avatarType: AvatarType;
+    avatarBgColor: string;
+  };
+}
+
 export interface Poll {
   id: string; // e.g. "poll-7x9q2"
   title: string; // Statement / question
@@ -50,4 +62,5 @@ export interface Poll {
   isClosed: boolean;
   decidedOptionId?: string; // If locked/finalized
   options: PollOption[];
+  messages?: ChatMessage[]; // Squad discussion chat thread
 }
